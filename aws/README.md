@@ -8,15 +8,15 @@ terraform {
 }
 
 provider "aws" {
-  profile = "default"
-  region  = "ap-northeast-3"
+  profile = "<desired_profile>"
+  region  = "<region>"
 }
 
 module "appsmith_ecs_ec2" {
   source            = "github.com/appsmithorg/appsmith-tf-modules.git//aws/ecs_ec2"
-  vpc_id            = "vpc-0305666a"
-  region            = "ap-northeast-3"
-  ecs_subnet_id     = ["subnet-9d20fdd0", "subnet-ba2c3fc2", "subnet-5804f731"]
+  vpc_id            = "<vpc_id>"
+  region            = "<region>"
+  ecs_subnet_id     = ["list", "of", "subnets"]
   appsmith_image    = "index.docker.io/appsmith/appsmith-ee:latest"
   ecs_instance_type = "t3.medium"
 
