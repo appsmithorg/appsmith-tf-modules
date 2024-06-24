@@ -228,8 +228,8 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
     }
     mountPoints = [{ sourceVolume = "appsmith", containerPath = "/appsmith-stacks", "readOnly" = false }]
     environment = [
-      { name = "APPSMITH_ENCRYPTION_PASSWORD", value = "La01QBbbtFgQa" },
-      { name = "APPSMITH_ENCRYPTION_SALT", value = "xGkMZcJRCB3zS" },
+      { name = "APPSMITH_ENCRYPTION_PASSWORD", value = var.appsmith_encryption_password },
+      { name = "APPSMITH_ENCRYPTION_SALT", value = var.appsmith_encryption_salt },
       { name = "APPSMITH_ENABLE_EMBEDDED_DB", value = "0" }
     ]
   }])

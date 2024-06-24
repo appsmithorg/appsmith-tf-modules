@@ -32,3 +32,15 @@ variable "appsmith_db_url" {
   description = "External DB URL"
   type        = string
 }
+
+variable "appsmith_encryption_salt" {
+  description = "Encryption Salt"
+  type        = string
+  default     = "xGkMZcJRCB3zS"
+}
+
+variable "appsmith_encryption_password" {
+  description = "Encryption Password"
+  type        = string
+  default     = "La01QBbbtFgQa"
+}
