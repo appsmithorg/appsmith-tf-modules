@@ -1,0 +1,34 @@
+variable "vpc_id" {
+  description = "Value of the Name tag for the EC2 instance"
+  type        = string
+}
+
+variable "region" {
+  description = "Value of the Name tag for the EC2 instance"
+  type        = string
+}
+
+variable "ecs_subnet_id" {
+  description = "Value of Subnet-id"
+  type        = list(any)
+}
+
+variable "ecs_subnet_count" {
+  description = "Total subnets"
+  type        = number
+}
+
+variable "appsmith_image" {
+  description = "Docker image of Appsmith"
+  type        = string
+}
+
+variable "ecs_instance_type" {
+  description = "Instance Type"
+  type        = string
+}
+
+variable "appsmith_db_url" {
+  description = "External DB URL"
+  type        = string
+}
