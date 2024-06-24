@@ -13,6 +13,11 @@ variable "ecs_subnet_id" {
   type        = list(any)
 }
 
+variable "ecs_subnet_count" {
+  description = "Total subnets"
+  type        = number
+}
+
 variable "appsmith_image" {
   description = "Docker image of Appsmith"
   type        = string
@@ -20,6 +25,11 @@ variable "appsmith_image" {
 
 variable "ecs_instance_type" {
   description = "Instance Type"
+  type        = string
+}
+
+variable "appsmith_db_url" {
+  description = "External DB URL"
   type        = string
 }
 

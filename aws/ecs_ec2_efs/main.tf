@@ -81,6 +81,31 @@ resource "aws_security_group" "ecs_node_sg" {
   }
 }
 
+resource "aws_security_group" "efs_sg" {
+  name        = "appsmith-efs-security-group"
+  vpc_id      = var.vpc_id
+  description = "Security groups rules for EFS"
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 2049
+    to_port     = 2049
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol    = "-1"
+    from_port   = 0
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "appsmith"
+  }
+
+}
+
 data "aws_ssm_parameter" "ecs_node_ami" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
@@ -188,6 +213,25 @@ resource "aws_cloudwatch_log_group" "ecs" {
   retention_in_days = 14
 }
 
+
+resource "aws_efs_file_system" "efs" {
+  creation_token   = "appsmith-efs"
+  performance_mode = "generalPurpose"
+  throughput_mode  = "bursting"
+  encrypted        = "true"
+  tags = {
+    Name = "appsmith"
+  }
+}
+
+## mount target
+resource "aws_efs_mount_target" "efs-mount-targets" {
+  count           = var.ecs_subnet_count
+  file_system_id  = aws_efs_file_system.efs.id
+  subnet_id       = var.ecs_subnet_id[count.index]
+  security_groups = [aws_security_group.efs_sg.id]
+}
+
 resource "aws_ecs_task_definition" "ecs_task_definition" {
   family                   = "appsmith-task-definition"
   requires_compatibilities = ["EC2"]
@@ -197,8 +241,11 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
   memory                   = 3072
   tags                     = { Name = "appsmith" }
   volume {
-    name      = "appsmith"
-    host_path = "/appsmith-stacks"
+    name = "appsmith-efs"
+    efs_volume_configuration {
+      file_system_id = aws_efs_file_system.efs.id
+      root_directory = "/"
+    }
   }
   runtime_platform {
     operating_system_family = "LINUX"
@@ -226,16 +273,17 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
         "awslogs-stream-prefix" = "appsmith"
       }
     }
-    mountPoints = [{ sourceVolume = "appsmith", containerPath = "/appsmith-stacks", "readOnly" = false }]
+    mountPoints = [{ sourceVolume = "appsmith-efs", containerPath = "/appsmith-stacks", "readOnly" = false }]
     environment = [
       { name = "APPSMITH_ENCRYPTION_PASSWORD", value = var.appsmith_encryption_password },
       { name = "APPSMITH_ENCRYPTION_SALT", value = var.appsmith_encryption_salt },
-      { name = "APPSMITH_ENABLE_EMBEDDED_DB", value = "0" }
+      { name = "APPSMITH_ENABLE_EMBEDDED_DB", value = "0" },
+      { name = "APPSMITH_DB_URL", value = var.appsmith_db_url }
     ]
   }])
 }
 
-# ## ECS service
+## ECS service
 
 resource "aws_ecs_service" "appsmith_ecs_service" {
   name            = "appsmith"
