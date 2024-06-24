@@ -40,7 +40,7 @@ provider "aws" {
 }
 
 module "appsmith_ecs_ec2" {
-  source            = "github.com/appsmithorg/appsmith-tf-modules.git//aws/ecs_ec2"
+  source            = "github.com/appsmithorg/appsmith-tf-modules.git//aws/ecs_ec2_efs"
   vpc_id            = "<vpc_id>"
   region            = "<region>"
   ecs_subnet_id     = ["list", "of", "subnets"]
