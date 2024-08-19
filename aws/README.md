@@ -71,7 +71,7 @@ provider "aws" {
 }
 
 module "appsmith_ecs_ec2" {
-  source            = ".//ecs_fargate"
+  source            = "github.com/appsmithorg/appsmith-tf-modules.git//aws/ecs_fargate"
   vpc_id            = "<vpc-id>"
   region            = "<region>"
   ecs_subnet_id     = ["list", "of", "subnets"]
