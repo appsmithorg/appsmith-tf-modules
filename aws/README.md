@@ -46,13 +46,42 @@ module "appsmith_ecs_ec2" {
   ecs_subnet_id     = ["list", "of", "subnets"]
   appsmith_image    = "index.docker.io/appsmith/appsmith-ee:latest"
   ecs_instance_type = "t3.medium"
-  ecs_subnet_count  = 3
+  ecs_subnet_count  = <subnet-count>
   appsmith_db_url   = "<external database url>"
 }
 
 }
 EOF
 ```
+
+## How to start Appsmith with ecs Fargate using external Database
+
+```
+mkdir appsmith && cd appsmith
+
+cat << EOF > appsmith_ecs_ec2_efs.tf
+
+terraform {
+
+}
+
+provider "aws" {
+  profile = "<desired_profile>"
+  region  = "<region>"
+}
+
+module "appsmith_ecs_ec2" {
+  source            = ".//ecs_fargate"
+  vpc_id            = "<vpc-id>"
+  region            = "<region>"
+  ecs_subnet_id     = ["list", "of", "subnets"]
+  appsmith_image    = "index.docker.io/appsmith/appsmith-ee:latest"
+  ecs_instance_type = "t3.medium"
+  ecs_subnet_count  = <count>
+  appsmith_db_url   = "<external database url>"
+}
+```
+
 
 ## Initializing the module
 ```
