@@ -39,6 +39,28 @@ resource "aws_iam_instance_profile" "ecs_node" {
 }
 
 ## Cluster Related
+resource "tls_private_key" "key_pair" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "aws_key_pair" "key_pair" {
+  key_name   = "appsmith-key-pair"
+  public_key = tls_private_key.key_pair.public_key_openssh
+}
+
+# Save the private key locally
+output "private_key_pem" {
+  value     = tls_private_key.key_pair.private_key_pem
+  sensitive = true
+}
+
+resource "local_file" "private_key" {
+  filename        = "${path.module}/appsmith-key-pair.pem"
+  content         = tls_private_key.key_pair.private_key_pem
+  file_permission = "0600"
+}
+
 resource "aws_ecs_cluster" "main" {
   name = "appsmith-cluster"
   setting {
@@ -69,6 +91,12 @@ resource "aws_security_group" "ecs_node_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     protocol    = "-1"
     from_port   = 0
@@ -116,6 +144,7 @@ resource "aws_launch_template" "ecs_ec2" {
   instance_type          = var.ecs_instance_type
   vpc_security_group_ids = [aws_security_group.ecs_node_sg.id]
   iam_instance_profile { arn = aws_iam_instance_profile.ecs_node.arn }
+  key_name               = aws_key_pair.key_pair.key_name
   monitoring { enabled = true }
   user_data = base64encode(<<-EOF
       #!/bin/bash
