@@ -212,7 +212,8 @@ resource "aws_ecs_task_definition" "ecs_task_definition" {
       { name = "APPSMITH_ENCRYPTION_PASSWORD", value = var.appsmith_encryption_password },
       { name = "APPSMITH_ENCRYPTION_SALT", value = var.appsmith_encryption_salt },
       { name = "APPSMITH_ENABLE_EMBEDDED_DB", value = "0" },
-      { name = "APPSMITH_DB_URL", value = var.appsmith_db_url }
+      { name = "APPSMITH_DB_URL", value = var.appsmith_db_url },
+      { name = "APPSMITH_REDIS_URL", value = var.appsmith_redis_url }
     ]
   }])
 }
