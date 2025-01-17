@@ -50,7 +50,6 @@ module "appsmith_ecs_ec2" {
   appsmith_db_url   = "<external database url>"
 }
 
-}
 EOF
 ```
 
@@ -59,7 +58,7 @@ EOF
 ```
 mkdir appsmith && cd appsmith
 
-cat << EOF > appsmith_ecs_ec2_efs.tf
+cat << EOF > appsmith_ecs_fargate.tf
 
 terraform {
 
@@ -70,7 +69,7 @@ provider "aws" {
   region  = "<region>"
 }
 
-module "appsmith_ecs_ec2" {
+module "appsmith_ecs_fargate" {
   source            = "github.com/appsmithorg/appsmith-tf-modules.git//aws/ecs_fargate"
   vpc_id            = "<vpc-id>"
   region            = "<region>"
@@ -79,6 +78,7 @@ module "appsmith_ecs_ec2" {
   ecs_instance_type = "t3.medium"
   ecs_subnet_count  = <count>
   appsmith_db_url   = "<external database url>"
+  appsmith_redis_url= "<external redis url>"
 }
 ```
 
