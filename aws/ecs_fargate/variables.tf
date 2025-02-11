@@ -44,3 +44,8 @@ variable "appsmith_db_url" {
   description = "External DB URL"
   type        = string
 }
+
+variable "appsmith_redis_url" {
+  description = "External Redis URL"
+  type        = string
+}
